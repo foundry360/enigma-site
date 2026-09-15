@@ -1,7 +1,15 @@
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
-import { Card, Kicker, Mono, Section, accentText } from "@/components/ui";
+import {
+  Band,
+  Button,
+  Panel,
+  SectionHead,
+  accentText,
+  bodyColor,
+  headingColor,
+} from "@/components/ui";
 import {
   category,
   contact,
@@ -15,6 +23,27 @@ import {
   thesis,
 } from "@/content/site";
 
+function Bullets({
+  tone,
+  points,
+}: {
+  tone: "dark" | "light" | "white";
+  points: readonly string[];
+}) {
+  return (
+    <ul className="mt-5 space-y-3">
+      {points.map((point) => (
+        <li key={point} className={`flex gap-3 text-sm ${bodyColor[tone]}`}>
+          <span className={accentText[tone].accent} aria-hidden>
+            —
+          </span>
+          <span className="leading-relaxed">{point}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function Home() {
   return (
     <>
@@ -22,88 +51,97 @@ export default function Home() {
       <main>
         <Hero />
 
-        {/* ---------------------------------------------------------- problem */}
-        <Section
-          id="problem"
-          kicker={problem.kicker}
-          title={problem.title}
-          subtitle={problem.subtitle}
-        >
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+        {/* ------------------------------------------------- problem · light */}
+        <Band tone="light" id="problem">
+          <SectionHead
+            tone="light"
+            kicker={problem.kicker}
+            title={problem.title}
+            subtitle={problem.subtitle}
+          />
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
             {problem.cards.map((card) => (
-              <Card key={card.title} accent={card.accent} className="p-7 pl-8">
-                <h3 className="text-lg font-semibold">{card.title}</h3>
-                <ul className="mt-4 space-y-3">
-                  {card.points.map((point) => (
-                    <li key={point} className="flex gap-2.5 text-sm text-muted">
-                      <span className="text-faint" aria-hidden>
-                        —
-                      </span>
-                      <span className="leading-relaxed">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
+              <Panel
+                key={card.title}
+                tone="light"
+                accent={card.accent}
+                className="p-8 pl-9"
+              >
+                <h3 className="text-lg font-bold text-ink">{card.title}</h3>
+                <Bullets tone="light" points={card.points} />
+              </Panel>
             ))}
           </div>
-
-          <div className="mt-6 rounded-lg border border-accent bg-panel-alt px-7 py-6">
-            <p className="text-base font-medium text-balance">{problem.band}</p>
-          </div>
-        </Section>
-
-        {/* ---------------------------------------------------------- thesis */}
-        <Section kicker={thesis.kicker} title={thesis.title}>
-          <blockquote className="mt-10 rounded-lg border border-line bg-panel p-8 border-l-[3px] border-l-accent">
-            <p className="text-lg leading-relaxed text-balance">
-              {thesis.quote}
+          <div className="mt-6 border border-purple/30 bg-white p-8 text-center">
+            <p className="text-base font-medium text-balance text-ink">
+              {problem.band}
             </p>
-          </blockquote>
+          </div>
+        </Band>
 
-          <ol className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        {/* -------------------------------------------------- thesis · dark */}
+        <Band tone="dark">
+          <SectionHead
+            tone="dark"
+            kicker={thesis.kicker}
+            title={thesis.title}
+            subtitle={thesis.quote}
+          />
+          <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
             {thesis.stages.map((stage, i) => (
               <li
                 key={stage.name}
-                className="rounded-lg border border-line bg-panel p-6"
+                className="border border-white/12 bg-[#0a0a0a] p-7 text-center"
               >
-                <Mono className={accentText[stage.accent]}>
+                <span
+                  className={`font-mono text-xs font-medium ${accentText.dark[stage.accent]}`}
+                >
                   {String(i + 1).padStart(2, "0")}
-                </Mono>
-                <h3 className="mt-3 text-base font-semibold">{stage.name}</h3>
+                </span>
+                <h3 className="mt-3 text-lg font-bold text-white">
+                  {stage.name}
+                </h3>
                 <p
-                  className={`mt-1.5 text-sm font-medium ${accentText[stage.accent]}`}
+                  className={`mt-1.5 text-sm font-medium ${accentText.dark[stage.accent]}`}
                 >
                   {stage.lead}
                 </p>
-                <p className="mt-2.5 text-sm leading-relaxed text-muted">
+                <p className="mt-3 text-sm leading-relaxed text-slate-dim">
                   {stage.body}
                 </p>
               </li>
             ))}
           </ol>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- how */}
-        <Section
-          id="how"
-          kicker={how.kicker}
-          title={how.title}
-          subtitle={how.subtitle}
-        >
-          <div className="mt-12 grid gap-4 lg:grid-cols-4">
-            {how.flow.map((step) => (
+        {/* ------------------------------------------------------ how · light */}
+        <Band tone="light" id="how">
+          <SectionHead
+            tone="light"
+            kicker={how.kicker}
+            title={how.title}
+            subtitle={how.subtitle}
+          />
+          <div className="mt-14 grid gap-5 lg:grid-cols-4">
+            {how.flow.map((step, i) => (
               <div
                 key={step.title}
-                className={`rounded-lg border bg-panel p-6 ${
-                  step.accent === "accent"
-                    ? "border-accent bg-panel-alt"
-                    : "border-line"
+                className={`border p-7 ${
+                  i === 1
+                    ? "border-purple/40 bg-white"
+                    : "border-black/10 bg-white"
                 }`}
               >
-                <Mono className={accentText[step.accent]}>{step.title}</Mono>
+                <p
+                  className={`font-mono text-[11px] font-medium tracking-[0.14em] uppercase ${
+                    i === 1 ? "text-purple" : "text-slate"
+                  }`}
+                >
+                  {step.title}
+                </p>
                 <div className="mt-3 space-y-1.5">
                   {step.lines.map((line) => (
-                    <p key={line} className="text-sm text-muted">
+                    <p key={line} className="text-sm text-slate">
                       {line}
                     </p>
                   ))}
@@ -112,233 +150,270 @@ export default function Home() {
             ))}
           </div>
 
-          <div className="mt-5 grid gap-5 md:grid-cols-3">
+          <div className="mt-6 grid gap-6 md:grid-cols-3">
             {how.notes.map((note) => (
-              <Card key={note.title} accent={note.accent} className="p-6 pl-7">
-                <h3 className="text-base font-semibold">{note.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-muted">
+              <Panel
+                key={note.title}
+                tone="light"
+                accent={note.accent}
+                className="p-7 pl-8"
+              >
+                <h3 className="text-base font-bold text-ink">{note.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate">
                   {note.body}
                 </p>
-              </Card>
+              </Panel>
             ))}
           </div>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- architecture */}
-        <Section
-          id="architecture"
-          kicker="Reference architecture"
-          title="One path, drawn end to end."
-          subtitle="Bind and interrogate feed a single policy decision point. That decision drives enforcement, the response path, and everything written to the evidence layer."
-        >
+        {/* --------------------------------------------- architecture · dark */}
+        <Band tone="dark" id="architecture">
+          <SectionHead
+            tone="dark"
+            kicker="Reference architecture"
+            title="One path, drawn end to end."
+            subtitle="Bind and interrogate feed a single policy decision point. That decision drives enforcement, the response path, and everything written to the evidence layer."
+            align="left"
+          />
           <figure className="mt-12">
-            <div className="overflow-x-auto rounded-lg border border-line bg-panel p-6">
+            <div className="overflow-x-auto border border-white/12 bg-[#0a0a0a] p-6">
               <ArchitectureDiagram />
             </div>
-            <figcaption className="mt-4 text-sm text-muted">
+            <figcaption className="mt-4 text-sm text-slate">
               Scroll horizontally to see the full diagram on narrow screens.
             </figcaption>
           </figure>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- decisions */}
-        <Section
-          id="decisions"
-          kicker={decisions.kicker}
-          title={decisions.title}
-          subtitle={decisions.subtitle}
-        >
-          <div className="mt-12 space-y-3">
+        {/* ------------------------------------------------ decisions · light */}
+        <Band tone="light" id="decisions">
+          <SectionHead
+            tone="light"
+            kicker={decisions.kicker}
+            title={decisions.title}
+            subtitle={decisions.subtitle}
+          />
+          <div className="mt-14 space-y-4">
             {decisions.rows.map((row) => (
-              <Card key={row.name} accent={row.accent} className="p-6 pl-8">
+              <Panel
+                key={row.name}
+                tone="light"
+                accent={row.accent}
+                className="p-7 pl-9"
+              >
                 <div className="grid gap-3 lg:grid-cols-12 lg:items-baseline lg:gap-6">
-                  <Mono
-                    className={`lg:col-span-3 ${accentText[row.accent]} block`}
+                  <span
+                    className={`font-mono text-xs font-bold tracking-[0.12em] lg:col-span-3 ${accentText.light[row.accent]}`}
                   >
                     {row.name}
-                  </Mono>
-                  <p className="font-medium lg:col-span-4">{row.meaning}</p>
-                  <p className="text-sm leading-relaxed text-muted lg:col-span-5">
+                  </span>
+                  <p className="font-medium text-ink lg:col-span-4">
+                    {row.meaning}
+                  </p>
+                  <p className="text-sm leading-relaxed text-slate lg:col-span-5">
                     {row.example}
                   </p>
                 </div>
-              </Card>
+              </Panel>
             ))}
           </div>
-          <p className="mt-6 text-sm text-muted">{decisions.note}</p>
-        </Section>
+          <p className="mt-6 text-sm text-slate">{decisions.note}</p>
+        </Band>
 
-        {/* ---------------------------------------------------------- enforcement */}
-        <Section
-          kicker={enforcement.kicker}
-          title={enforcement.title}
-          subtitle={enforcement.subtitle}
-        >
-          <div className="mt-12 grid gap-5 lg:grid-cols-2">
+        {/* ---------------------------------------------- enforcement · dark */}
+        <Band tone="dark">
+          <SectionHead
+            tone="dark"
+            kicker={enforcement.kicker}
+            title={enforcement.title}
+            subtitle={enforcement.subtitle}
+          />
+          <div className="mt-14 grid gap-6 lg:grid-cols-2">
             {enforcement.columns.map((col) => (
-              <Card key={col.title} accent={col.accent} className="p-7 pl-8">
-                <Mono className={accentText[col.accent]}>{col.title}</Mono>
-                <p className="mt-3 text-base font-medium">{col.lead}</p>
-                <ul className="mt-4 space-y-2.5">
-                  {col.points.map((point) => (
-                    <li key={point} className="flex gap-2.5 text-sm text-muted">
-                      <span className="text-faint" aria-hidden>
-                        —
-                      </span>
-                      <span className="leading-relaxed">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
+              <Panel
+                key={col.title}
+                tone="dark"
+                accent={col.accent}
+                className="p-8 pl-9"
+              >
+                <p
+                  className={`font-mono text-[11px] font-medium tracking-[0.16em] uppercase ${accentText.dark[col.accent]}`}
+                >
+                  {col.title}
+                </p>
+                <p className="mt-3 text-base font-medium text-white">
+                  {col.lead}
+                </p>
+                <Bullets tone="dark" points={col.points} />
+              </Panel>
             ))}
           </div>
-
-          <div className="mt-5 rounded-lg border border-line bg-panel-alt p-7">
-            <Mono className="text-danger">
+          <div className="mt-6 border border-white/12 bg-[#0a0a0a] p-8">
+            <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-[#f87171] uppercase">
               {enforcement.disclaimer.title}
-            </Mono>
-            <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+            </p>
+            <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-dim">
               {enforcement.disclaimer.body}
             </p>
           </div>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- evidence */}
-        <Section
-          id="evidence"
-          kicker={evidence.kicker}
-          title={evidence.title}
-          subtitle={evidence.subtitle}
-        >
-          <div className="mt-12 grid gap-5 md:grid-cols-2">
+        {/* ------------------------------------------------- evidence · light */}
+        <Band tone="light" id="evidence">
+          <SectionHead
+            tone="light"
+            kicker={evidence.kicker}
+            title={evidence.title}
+            subtitle={evidence.subtitle}
+          />
+          <div className="mt-14 grid gap-6 md:grid-cols-2">
             {evidence.items.map((item) => (
-              <Card key={item.title} accent={item.accent} className="p-7 pl-8">
-                <h3 className="text-base font-semibold">{item.title}</h3>
-                <p className="mt-2.5 text-sm leading-relaxed text-muted">
+              <Panel
+                key={item.title}
+                tone="light"
+                accent={item.accent}
+                className="p-8 pl-9"
+              >
+                <h3 className="text-base font-bold text-ink">{item.title}</h3>
+                <p className="mt-2.5 text-sm leading-relaxed text-slate">
                   {item.body}
                 </p>
-              </Card>
+              </Panel>
             ))}
           </div>
-          <div className="mt-6 rounded-lg border border-accent bg-panel-alt px-7 py-6">
-            <p className="font-medium text-balance">{evidence.band}</p>
+          <div className="mt-6 border border-purple/30 bg-white p-8 text-center">
+            <p className="font-medium text-balance text-ink">{evidence.band}</p>
           </div>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- healthcare */}
-        <Section
-          id="healthcare"
-          kicker={healthcare.kicker}
-          title={healthcare.title}
-          subtitle={healthcare.subtitle}
-        >
-          <div className="mt-12 space-y-3">
+        {/* ----------------------------------------------- healthcare · dark */}
+        <Band tone="dark" id="healthcare">
+          <SectionHead
+            tone="dark"
+            kicker={healthcare.kicker}
+            title={healthcare.title}
+            subtitle={healthcare.subtitle}
+            align="left"
+          />
+          <div className="mt-12 space-y-4">
             {healthcare.rows.map((row) => (
-              <Card key={row.ask} accent={row.accent} className="p-6 pl-8">
+              <Panel
+                key={row.ask}
+                tone="dark"
+                accent={row.accent}
+                className="p-7 pl-9"
+              >
                 <div className="grid gap-3 lg:grid-cols-12 lg:items-baseline lg:gap-6">
-                  <p className="font-medium lg:col-span-4">
+                  <p className="font-medium text-white lg:col-span-4">
                     &ldquo;{row.ask}&rdquo;
                   </p>
-                  <Mono
-                    className={`lg:col-span-3 ${accentText[row.accent]} block`}
+                  <span
+                    className={`font-mono text-xs font-bold tracking-[0.12em] lg:col-span-3 ${accentText.dark[row.accent]}`}
                   >
                     {row.decision}
-                  </Mono>
-                  <p className="text-sm leading-relaxed text-muted lg:col-span-5">
+                  </span>
+                  <p className="text-sm leading-relaxed text-slate-dim lg:col-span-5">
                     {row.detail}
                   </p>
                 </div>
-              </Card>
+              </Panel>
             ))}
           </div>
-          <p className="mt-6 max-w-4xl text-sm leading-relaxed text-muted">
+          <p className="mt-6 max-w-4xl text-sm leading-relaxed text-slate">
             {healthcare.note}
           </p>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- category */}
-        <Section
-          kicker={category.kicker}
-          title={category.title}
-          subtitle={category.subtitle}
-        >
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {/* ------------------------------------------------- category · light */}
+        <Band tone="light">
+          <SectionHead
+            tone="light"
+            kicker={category.kicker}
+            title={category.title}
+            subtitle={category.subtitle}
+          />
+          <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {category.adjacent.map((item) => (
               <div
                 key={item.name}
-                className="rounded-lg border border-line bg-panel px-6 py-5"
+                className="border border-black/10 bg-white px-7 py-6 text-center"
               >
-                <h3 className="text-sm font-semibold text-muted">
-                  {item.name}
-                </h3>
-                <p className="mt-1 text-sm text-faint">{item.body}</p>
+                <h3 className="text-sm font-bold text-ink">{item.name}</h3>
+                <p className="mt-1.5 text-sm text-slate">{item.body}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-5 rounded-lg border border-accent bg-panel-alt p-8 border-l-[3px]">
-            <Mono className="text-accent">{category.highlight.label}</Mono>
-            <p className="mt-3 max-w-4xl text-lg leading-relaxed">
+          <div className="mt-6 bg-purple p-10 text-center">
+            <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
+              {category.highlight.label}
+            </p>
+            <p className="mx-auto mt-4 max-w-4xl text-xl leading-relaxed font-medium text-white">
               {category.highlight.lead}
             </p>
-            <p className="mt-3 max-w-4xl text-sm leading-relaxed text-muted">
+            <p className="mx-auto mt-4 max-w-3xl text-sm leading-relaxed text-white/75">
               {category.highlight.body}
             </p>
           </div>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- product */}
-        <Section
-          kicker={product.kicker}
-          title={product.title}
-          subtitle={product.subtitle}
-        >
-          <div className="mt-12 grid gap-5 md:grid-cols-3">
+        {/* --------------------------------------------------- product · dark */}
+        <Band tone="dark">
+          <SectionHead
+            tone="dark"
+            kicker={product.kicker}
+            title={product.title}
+            subtitle={product.subtitle}
+          />
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
             {product.columns.map((col) => (
-              <Card key={col.title} accent={col.accent} className="p-7 pl-8">
-                <h3 className="text-base font-semibold">{col.title}</h3>
-                <ul className="mt-4 space-y-2.5">
-                  {col.points.map((point) => (
-                    <li key={point} className="flex gap-2.5 text-sm text-muted">
-                      <span className="text-faint" aria-hidden>
-                        —
-                      </span>
-                      <span className="leading-relaxed">{point}</span>
-                    </li>
-                  ))}
-                </ul>
-              </Card>
+              <Panel
+                key={col.title}
+                tone="dark"
+                accent={col.accent}
+                className="p-8 pl-9"
+              >
+                <h3 className={`text-base font-bold ${headingColor.dark}`}>
+                  {col.title}
+                </h3>
+                <Bullets tone="dark" points={col.points} />
+              </Panel>
             ))}
           </div>
-        </Section>
+        </Band>
 
-        {/* ---------------------------------------------------------- contact */}
-        <section id="contact" className="border-t border-line px-6 py-24 sm:px-10">
-          <div className="mx-auto w-full max-w-[1180px]">
-            <Kicker accent="brand">{contact.kicker}</Kicker>
-            <h2 className="mt-6 max-w-3xl text-3xl font-bold tracking-tight text-balance sm:text-4xl">
+        {/* ------------------------------------------------- contact · white */}
+        <Band tone="white" id="contact">
+          <div className="bg-purple px-8 py-16 text-center">
+            <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
+              {contact.kicker}
+            </p>
+            <h2 className="mt-4 text-3xl font-bold tracking-tight text-balance text-white sm:text-4xl">
               {contact.title}
             </h2>
-            <p className="mt-4 max-w-3xl text-base leading-relaxed text-muted">
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/80">
               {contact.body}
             </p>
-            <a
-              href={`mailto:${contact.email}?subject=Enigma%20working%20session`}
-              className="mt-8 inline-block rounded-md bg-brand px-6 py-3 text-sm font-semibold text-bg transition-opacity hover:opacity-90"
-            >
-              {contact.email}
-            </a>
+            <div className="mt-9">
+              <Button
+                href={`mailto:${contact.email}?subject=Enigma%20working%20session`}
+                variant="onPurple"
+              >
+                {contact.email}
+              </Button>
+            </div>
           </div>
-        </section>
+        </Band>
       </main>
 
-      <footer className="border-t border-line px-6 py-10 sm:px-10">
-        <div className="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-between gap-4">
-          <p className="font-mono text-[11px] tracking-[0.12em] text-faint uppercase">
-            Enigma · AI Action Governance
+      <footer className="bg-purple px-6 py-7 sm:px-10">
+        <div className="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
+          <p className="text-sm text-white/80">
+            © {new Date().getFullYear()} Foundry360. All rights reserved.
           </p>
-          <p className="text-sm text-faint">
-            © {new Date().getFullYear()} Foundry360 · {contact.site}
+          <p className="text-sm text-white/55">
+            Enigma · AI Action Governance · {contact.site}
           </p>
         </div>
       </footer>

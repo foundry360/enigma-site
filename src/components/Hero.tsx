@@ -1,41 +1,30 @@
 import { hero } from "@/content/site";
-import { Mono } from "./ui";
+import { Button } from "./ui";
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden px-6 pt-20 pb-24 sm:px-10 lg:pt-28 lg:pb-32">
-      <div
-        className="pointer-events-none absolute -top-40 left-1/2 h-[420px] w-[820px] -translate-x-1/2 rounded-full bg-accent/10 blur-[140px]"
-        aria-hidden
-      />
-      <div className="relative mx-auto w-full max-w-[1180px]">
-        <Mono className="text-muted">{hero.eyebrow}</Mono>
-
-        <h1 className="mt-6 text-6xl font-bold tracking-tight sm:text-7xl">
-          {hero.title}
-        </h1>
-        <p className="mt-3 text-2xl font-light text-accent sm:text-3xl">
-          {hero.tagline}
+    <section className="bg-black px-6 py-28 text-center sm:px-10 lg:py-36">
+      <div className="mx-auto w-full max-w-[1000px]">
+        <p className="font-mono text-xs font-medium tracking-[0.2em] text-purple-soft uppercase">
+          {hero.eyebrow} · {hero.tagline}
         </p>
 
-        <p className="mt-8 max-w-3xl text-lg leading-relaxed text-muted">
+        <h1 className="mt-7 text-5xl leading-[1.06] font-bold tracking-tight text-balance text-white sm:text-6xl lg:text-7xl">
+          {hero.headline}
+        </h1>
+
+        <p className="mx-auto mt-7 max-w-3xl text-lg leading-relaxed text-slate-dim">
           {hero.body}
         </p>
 
-        <ol className="mt-10 flex flex-wrap items-center gap-2">
+        <ol className="mt-10 flex flex-wrap items-center justify-center gap-2">
           {hero.stages.map((stage, i) => (
             <li key={stage} className="flex items-center gap-2">
-              <span
-                className={`rounded-full border px-4 py-1.5 font-mono text-[11px] font-semibold tracking-[0.14em] uppercase ${
-                  i === hero.stages.length - 1
-                    ? "border-brand text-brand"
-                    : "border-accent text-accent"
-                }`}
-              >
+              <span className="border border-purple-soft/40 px-4 py-1.5 font-mono text-[11px] font-medium tracking-[0.14em] text-purple-soft uppercase">
                 {stage}
               </span>
               {i < hero.stages.length - 1 ? (
-                <span className="text-faint" aria-hidden>
+                <span className="text-slate" aria-hidden>
                   ›
                 </span>
               ) : null}
@@ -43,22 +32,14 @@ export function Hero() {
           ))}
         </ol>
 
-        <div className="mt-11 flex flex-wrap items-center gap-3">
-          <a
-            href={hero.primary.href}
-            className="rounded-md bg-accent px-5 py-3 text-sm font-semibold text-bg transition-colors hover:bg-accent-hover"
-          >
-            {hero.primary.label}
-          </a>
-          <a
-            href={hero.secondary.href}
-            className="rounded-md border border-line-strong px-5 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
-          >
+        <div className="mt-11 flex flex-wrap items-center justify-center gap-3">
+          <Button href={hero.primary.href}>{hero.primary.label}</Button>
+          <Button href={hero.secondary.href} variant="outline">
             {hero.secondary.label}
-          </a>
+          </Button>
         </div>
 
-        <p className="mt-10 font-mono text-[11px] tracking-[0.1em] text-faint">
+        <p className="mt-12 text-xs tracking-[0.08em] text-slate">
           {hero.meta}
         </p>
       </div>

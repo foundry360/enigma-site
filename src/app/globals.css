@@ -1,37 +1,35 @@
 @import "tailwindcss";
 
-/* Palette mirrors the Enigma console theme so product, deck, and site read as one system. */
+/* Palette and rhythm follow the Node2AI house style: alternating black and
+   light bands, a single deep purple accent, and square corners throughout. */
 @theme {
-  --color-bg: #0d1017;
-  --color-panel: #161b21;
-  --color-panel-alt: #1a2028;
-  --color-line: #232833;
-  --color-line-strong: #2e3544;
-  --color-ink: #f4f6f8;
-  --color-muted: #8b93a7;
-  --color-faint: #5c6578;
-  --color-accent: #2697d9;
-  --color-accent-hover: #1e86c4;
-  --color-brand: #1fad6d;
-  --color-warn: #fbbf24;
-  --color-danger: #f87171;
+  --color-black: #030303;
+  --color-light: #f0f2f4;
+  --color-offwhite: #fafafa;
+  --color-ink: #09090b;
+  --color-slate: #64748b;
+  --color-slate-dim: #94a3b8;
 
-  --font-sans: var(--font-inter);
-  --font-mono: var(--font-jetbrains);
+  --color-purple: #45196c;
+  --color-purple-hover: #57218a;
+  --color-purple-soft: #b69ad4;
+
+  --font-sans: var(--font-roboto);
+  --font-mono: var(--font-roboto-mono);
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 5rem;
+  scroll-padding-top: 4.5rem;
 }
 
 body {
-  background: var(--color-bg);
+  background: var(--color-black);
   color: var(--color-ink);
 }
 
 ::selection {
-  background: rgba(38, 151, 217, 0.3);
+  background: rgba(69, 25, 108, 0.35);
 }
 
 @media (prefers-reduced-motion: reduce) {

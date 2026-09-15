@@ -1,13 +1,13 @@
 const C = {
-  panel: "#161b21",
-  panelAlt: "#1a2028",
-  line: "#232833",
-  lineStrong: "#2e3544",
-  ink: "#f4f6f8",
-  muted: "#8b93a7",
-  faint: "#5c6578",
-  accent: "#2697d9",
-  brand: "#1fad6d",
+  panel: "#0a0a0a",
+  panelAlt: "#111114",
+  line: "#26262b",
+  lineStrong: "#34343c",
+  ink: "#ffffff",
+  muted: "#94a3b8",
+  faint: "#64748b",
+  accent: "#b69ad4",
+  brand: "#4ade80",
   warn: "#fbbf24",
 };
 
