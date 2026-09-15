@@ -1,26 +1,41 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Palette mirrors the Enigma console theme so product, deck, and site read as one system. */
+@theme {
+  --color-bg: #0d1017;
+  --color-panel: #161b21;
+  --color-panel-alt: #1a2028;
+  --color-line: #232833;
+  --color-line-strong: #2e3544;
+  --color-ink: #f4f6f8;
+  --color-muted: #8b93a7;
+  --color-faint: #5c6578;
+  --color-accent: #2697d9;
+  --color-accent-hover: #1e86c4;
+  --color-brand: #1fad6d;
+  --color-warn: #fbbf24;
+  --color-danger: #f87171;
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-ink);
+}
+
+::selection {
+  background: rgba(38, 151, 217, 0.3);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 }
