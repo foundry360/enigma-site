@@ -27,11 +27,17 @@ npm run build    # static export to ./out
 |------|---------|
 | `src/content/site.ts` | All page copy, as typed data |
 | `src/app/page.tsx` | Section composition |
+| `src/components/Nav.tsx`, `Hero.tsx` | Header and opening section |
 | `src/components/ArchitectureDiagram.tsx` | Reference architecture, inline SVG |
-| `src/components/ui.tsx` | Section, Card, Kicker primitives |
-| `src/app/globals.css` | Design tokens, mirrored from the Enigma console theme |
+| `src/components/ui.tsx` | `Band`, `SectionHead`, `Panel`, `CardIcon`, `Button` primitives |
+| `src/components/icons.ts` | Name-to-glyph map so content can name icons without importing React |
+| `src/app/globals.css` | Design tokens, following the Node2AI house palette |
 
 Copy changes belong in `src/content/site.ts`. Layout changes belong in the components.
+
+`CardIcon` takes a `size` prop rather than a size utility through `className`.
+Tailwind resolves conflicting size utilities by stylesheet order, not class
+order, so an override passed via `className` silently loses to the default.
 
 ## Claims discipline
 

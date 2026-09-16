@@ -29,7 +29,7 @@ export function Nav() {
 
         <a
           href={nav.cta.href}
-          className="bg-purple px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-hover"
+          className="rounded-md bg-purple px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-hover"
         >
           {nav.cta.label}
         </a>

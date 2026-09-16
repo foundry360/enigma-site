@@ -4,11 +4,10 @@ import { Nav } from "@/components/Nav";
 import {
   Band,
   Button,
+  CardIcon,
   Panel,
   SectionHead,
   accentText,
-  bodyColor,
-  headingColor,
 } from "@/components/ui";
 import {
   category,
@@ -22,27 +21,6 @@ import {
   product,
   thesis,
 } from "@/content/site";
-
-function Bullets({
-  tone,
-  points,
-}: {
-  tone: "dark" | "light" | "white";
-  points: readonly string[];
-}) {
-  return (
-    <ul className="mt-5 space-y-3">
-      {points.map((point) => (
-        <li key={point} className={`flex gap-3 text-sm ${bodyColor[tone]}`}>
-          <span className={accentText[tone].accent} aria-hidden>
-            —
-          </span>
-          <span className="leading-relaxed">{point}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
 
 export default function Home() {
   return (
@@ -61,18 +39,18 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {problem.cards.map((card) => (
-              <Panel
-                key={card.title}
-                tone="light"
-                accent={card.accent}
-                className="p-8 pl-9"
-              >
-                <h3 className="text-lg font-bold text-ink">{card.title}</h3>
-                <Bullets tone="light" points={card.points} />
+              <Panel key={card.title} tone="light" className="p-8">
+                <CardIcon name={card.icon} tone="light" accent={card.accent} />
+                <h3 className="mt-5 text-lg font-bold text-ink">
+                  {card.title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate">
+                  {card.body}
+                </p>
               </Panel>
             ))}
           </div>
-          <div className="mt-6 border border-purple/30 bg-white p-8 text-center">
+          <div className="mt-6 rounded-lg border border-black/10 bg-white p-8 text-center">
             <p className="text-base font-medium text-balance text-ink">
               {problem.band}
             </p>
@@ -88,27 +66,28 @@ export default function Home() {
             subtitle={thesis.quote}
           />
           <ol className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-            {thesis.stages.map((stage, i) => (
-              <li
-                key={stage.name}
-                className="border border-white/12 bg-[#0a0a0a] p-7 text-center"
-              >
-                <span
-                  className={`font-mono text-xs font-medium ${accentText.dark[stage.accent]}`}
-                >
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-3 text-lg font-bold text-white">
-                  {stage.name}
-                </h3>
-                <p
-                  className={`mt-1.5 text-sm font-medium ${accentText.dark[stage.accent]}`}
-                >
-                  {stage.lead}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-slate-dim">
-                  {stage.body}
-                </p>
+            {thesis.stages.map((stage) => (
+              <li key={stage.name}>
+                <Panel tone="dark" className="h-full p-7 text-center">
+                  <div className="flex justify-center">
+                    <CardIcon
+                      name={stage.icon}
+                      tone="dark"
+                      accent={stage.accent}
+                    />
+                  </div>
+                  <h3 className="mt-4 text-lg font-bold text-white">
+                    {stage.name}
+                  </h3>
+                  <p
+                    className={`mt-1.5 text-sm font-medium ${accentText.dark[stage.accent]}`}
+                  >
+                    {stage.lead}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-slate-dim">
+                    {stage.body}
+                  </p>
+                </Panel>
               </li>
             ))}
           </ol>
@@ -123,42 +102,28 @@ export default function Home() {
             subtitle={how.subtitle}
           />
           <div className="mt-14 grid gap-5 lg:grid-cols-4">
-            {how.flow.map((step, i) => (
-              <div
-                key={step.title}
-                className={`border p-7 ${
-                  i === 1
-                    ? "border-purple/40 bg-white"
-                    : "border-black/10 bg-white"
-                }`}
-              >
-                <p
-                  className={`font-mono text-[11px] font-medium tracking-[0.14em] uppercase ${
-                    i === 1 ? "text-purple" : "text-slate"
-                  }`}
-                >
-                  {step.title}
-                </p>
-                <div className="mt-3 space-y-1.5">
+            {how.flow.map((step) => (
+              <Panel key={step.title} tone="light" className="p-7">
+                <CardIcon name={step.icon} tone="light" accent={step.accent} />
+                <p className="mt-4 text-sm font-bold text-ink">{step.title}</p>
+                <div className="mt-2 space-y-1.5">
                   {step.lines.map((line) => (
                     <p key={line} className="text-sm text-slate">
                       {line}
                     </p>
                   ))}
                 </div>
-              </div>
+              </Panel>
             ))}
           </div>
 
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {how.notes.map((note) => (
-              <Panel
-                key={note.title}
-                tone="light"
-                accent={note.accent}
-                className="p-7 pl-8"
-              >
-                <h3 className="text-base font-bold text-ink">{note.title}</h3>
+              <Panel key={note.title} tone="light" className="p-7">
+                <CardIcon name={note.icon} tone="light" accent={note.accent} />
+                <h3 className="mt-4 text-base font-bold text-ink">
+                  {note.title}
+                </h3>
                 <p className="mt-2 text-sm leading-relaxed text-slate">
                   {note.body}
                 </p>
@@ -177,7 +142,7 @@ export default function Home() {
             align="left"
           />
           <figure className="mt-12">
-            <div className="overflow-x-auto border border-white/12 bg-[#0a0a0a] p-6">
+            <div className="overflow-x-auto rounded-lg border border-white/12 bg-[#0a0a0a] p-6">
               <ArchitectureDiagram />
             </div>
             <figcaption className="mt-4 text-sm text-slate">
@@ -196,18 +161,22 @@ export default function Home() {
           />
           <div className="mt-14 space-y-4">
             {decisions.rows.map((row) => (
-              <Panel
-                key={row.name}
-                tone="light"
-                accent={row.accent}
-                className="p-7 pl-9"
-              >
-                <div className="grid gap-3 lg:grid-cols-12 lg:items-baseline lg:gap-6">
-                  <span
-                    className={`font-mono text-xs font-bold tracking-[0.12em] lg:col-span-3 ${accentText.light[row.accent]}`}
-                  >
-                    {row.name}
-                  </span>
+              <Panel key={row.name} tone="light" className="p-7">
+                <div className="grid gap-3 lg:grid-cols-12 lg:items-center lg:gap-6">
+                  <div className="flex items-center gap-3 lg:col-span-3">
+                    <CardIcon
+                      name={row.icon}
+                      tone="light"
+                      accent={row.accent}
+                      size="size-6"
+                      className="shrink-0"
+                    />
+                    <span
+                      className={`font-mono text-xs font-bold tracking-[0.12em] ${accentText.light[row.accent]}`}
+                    >
+                      {row.name}
+                    </span>
+                  </div>
                   <p className="font-medium text-ink lg:col-span-4">
                     {row.meaning}
                   </p>
@@ -231,32 +200,30 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-6 lg:grid-cols-2">
             {enforcement.columns.map((col) => (
-              <Panel
-                key={col.title}
-                tone="dark"
-                accent={col.accent}
-                className="p-8 pl-9"
-              >
+              <Panel key={col.title} tone="dark" className="p-8">
+                <CardIcon name={col.icon} tone="dark" accent={col.accent} />
                 <p
-                  className={`font-mono text-[11px] font-medium tracking-[0.16em] uppercase ${accentText.dark[col.accent]}`}
+                  className={`mt-5 font-mono text-[11px] font-medium tracking-[0.16em] uppercase ${accentText.dark[col.accent]}`}
                 >
                   {col.title}
                 </p>
-                <p className="mt-3 text-base font-medium text-white">
+                <p className="mt-2 text-base font-medium text-white">
                   {col.lead}
                 </p>
-                <Bullets tone="dark" points={col.points} />
+                <p className="mt-3 text-sm leading-relaxed text-slate-dim">
+                  {col.body}
+                </p>
               </Panel>
             ))}
           </div>
-          <div className="mt-6 border border-white/12 bg-[#0a0a0a] p-8">
+          <Panel tone="dark" className="mt-6 p-8">
             <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-[#f87171] uppercase">
               {enforcement.disclaimer.title}
             </p>
             <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-dim">
               {enforcement.disclaimer.body}
             </p>
-          </div>
+          </Panel>
         </Band>
 
         {/* ------------------------------------------------- evidence · light */}
@@ -269,20 +236,18 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-6 md:grid-cols-2">
             {evidence.items.map((item) => (
-              <Panel
-                key={item.title}
-                tone="light"
-                accent={item.accent}
-                className="p-8 pl-9"
-              >
-                <h3 className="text-base font-bold text-ink">{item.title}</h3>
+              <Panel key={item.title} tone="light" className="p-8">
+                <CardIcon name={item.icon} tone="light" accent={item.accent} />
+                <h3 className="mt-5 text-base font-bold text-ink">
+                  {item.title}
+                </h3>
                 <p className="mt-2.5 text-sm leading-relaxed text-slate">
                   {item.body}
                 </p>
               </Panel>
             ))}
           </div>
-          <div className="mt-6 border border-purple/30 bg-white p-8 text-center">
+          <div className="mt-6 rounded-lg border border-black/10 bg-white p-8 text-center">
             <p className="font-medium text-balance text-ink">{evidence.band}</p>
           </div>
         </Band>
@@ -298,21 +263,25 @@ export default function Home() {
           />
           <div className="mt-12 space-y-4">
             {healthcare.rows.map((row) => (
-              <Panel
-                key={row.ask}
-                tone="dark"
-                accent={row.accent}
-                className="p-7 pl-9"
-              >
-                <div className="grid gap-3 lg:grid-cols-12 lg:items-baseline lg:gap-6">
+              <Panel key={row.ask} tone="dark" className="p-7">
+                <div className="grid gap-3 lg:grid-cols-12 lg:items-center lg:gap-6">
                   <p className="font-medium text-white lg:col-span-4">
                     &ldquo;{row.ask}&rdquo;
                   </p>
-                  <span
-                    className={`font-mono text-xs font-bold tracking-[0.12em] lg:col-span-3 ${accentText.dark[row.accent]}`}
-                  >
-                    {row.decision}
-                  </span>
+                  <div className="flex items-center gap-3 lg:col-span-3">
+                    <CardIcon
+                      name={row.icon}
+                      tone="dark"
+                      accent={row.accent}
+                      size="size-6"
+                      className="shrink-0"
+                    />
+                    <span
+                      className={`font-mono text-xs font-bold tracking-[0.12em] ${accentText.dark[row.accent]}`}
+                    >
+                      {row.decision}
+                    </span>
+                  </div>
                   <p className="text-sm leading-relaxed text-slate-dim lg:col-span-5">
                     {row.detail}
                   </p>
@@ -335,17 +304,19 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {category.adjacent.map((item) => (
-              <div
+              <Panel
                 key={item.name}
-                className="border border-black/10 bg-white px-7 py-6 text-center"
+                tone="light"
+                className="flex flex-col items-center px-7 py-7 text-center"
               >
-                <h3 className="text-sm font-bold text-ink">{item.name}</h3>
+                <CardIcon name={item.icon} tone="light" />
+                <h3 className="mt-4 text-sm font-bold text-ink">{item.name}</h3>
                 <p className="mt-1.5 text-sm text-slate">{item.body}</p>
-              </div>
+              </Panel>
             ))}
           </div>
 
-          <div className="mt-6 bg-purple p-10 text-center">
+          <div className="mt-6 rounded-lg bg-purple p-10 text-center">
             <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
               {category.highlight.label}
             </p>
@@ -368,16 +339,14 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {product.columns.map((col) => (
-              <Panel
-                key={col.title}
-                tone="dark"
-                accent={col.accent}
-                className="p-8 pl-9"
-              >
-                <h3 className={`text-base font-bold ${headingColor.dark}`}>
+              <Panel key={col.title} tone="dark" className="p-8">
+                <CardIcon name={col.icon} tone="dark" accent={col.accent} />
+                <h3 className="mt-5 text-base font-bold text-white">
                   {col.title}
                 </h3>
-                <Bullets tone="dark" points={col.points} />
+                <p className="mt-3 text-sm leading-relaxed text-slate-dim">
+                  {col.body}
+                </p>
               </Panel>
             ))}
           </div>
@@ -385,7 +354,7 @@ export default function Home() {
 
         {/* ------------------------------------------------- contact · white */}
         <Band tone="white" id="contact">
-          <div className="bg-purple px-8 py-16 text-center">
+          <div className="rounded-lg bg-purple px-8 py-16 text-center">
             <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
               {contact.kicker}
             </p>

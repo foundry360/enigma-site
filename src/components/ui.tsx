@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Accent } from "@/content/site";
+import { icons, type IconName } from "./icons";
 
 export type Tone = "dark" | "light" | "white";
 
@@ -50,30 +51,6 @@ export const accentText: Record<Tone, Record<Accent, string>> = {
     warn: "text-[#b45309]",
     danger: "text-[#b91c1c]",
     muted: "text-slate",
-  },
-};
-
-export const accentRule: Record<Tone, Record<Accent, string>> = {
-  dark: {
-    accent: "bg-purple-soft",
-    brand: "bg-[#4ade80]",
-    warn: "bg-[#fbbf24]",
-    danger: "bg-[#f87171]",
-    muted: "bg-white/25",
-  },
-  light: {
-    accent: "bg-purple",
-    brand: "bg-[#15803d]",
-    warn: "bg-[#b45309]",
-    danger: "bg-[#b91c1c]",
-    muted: "bg-black/20",
-  },
-  white: {
-    accent: "bg-purple",
-    brand: "bg-[#15803d]",
-    warn: "bg-[#b45309]",
-    danger: "bg-[#b91c1c]",
-    muted: "bg-black/20",
   },
 };
 
@@ -138,25 +115,42 @@ export function SectionHead({
 
 export function Panel({
   tone,
-  accent,
   className = "",
   children,
 }: {
   tone: Tone;
-  accent?: Accent;
   className?: string;
   children: ReactNode;
 }) {
   return (
-    <div className={`relative border ${cardShell[tone]} ${className}`}>
-      {accent ? (
-        <span
-          className={`absolute inset-y-0 left-0 w-[3px] ${accentRule[tone][accent]}`}
-          aria-hidden
-        />
-      ) : null}
+    <div className={`rounded-lg border ${cardShell[tone]} ${className}`}>
       {children}
     </div>
+  );
+}
+
+export function CardIcon({
+  name,
+  tone,
+  accent = "accent",
+  /* Tailwind resolves conflicting size utilities by stylesheet order, not by
+     class order, so the caller passes a replacement rather than an override. */
+  size = "size-9",
+  className = "",
+}: {
+  name: IconName;
+  tone: Tone;
+  accent?: Accent;
+  size?: string;
+  className?: string;
+}) {
+  const Glyph = icons[name];
+  return (
+    <Glyph
+      className={`${size} ${accentText[tone][accent]} ${className}`}
+      strokeWidth={1.5}
+      aria-hidden
+    />
   );
 }
 
@@ -178,7 +172,7 @@ export function Button({
   return (
     <a
       href={href}
-      className={`inline-block px-6 py-3 text-sm font-medium transition-colors ${styles}`}
+      className={`inline-block rounded-md px-6 py-3 text-sm font-medium transition-colors ${styles}`}
     >
       {children}
     </a>
