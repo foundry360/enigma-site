@@ -83,8 +83,9 @@ function ContactDialog({ hide }: { hide: () => void }) {
     const form = event.currentTarget;
     const data = new FormData(form);
 
-    /* Honeypot: bots that fill hidden fields are dropped silently. */
-    if (String(data.get("company_website") ?? "").trim()) {
+    /* Checkbox honeypot: bots check it, browsers do not autofill it the way
+       they fill hidden text fields named like "company_website". */
+    if (data.get("botcheck")) {
       setStatus("sent");
       return;
     }
@@ -94,6 +95,12 @@ function ContactDialog({ hide }: { hide: () => void }) {
     const email = String(data.get("email") ?? "").trim();
     const company = String(data.get("company") ?? "").trim();
     const message = String(data.get("message") ?? "").trim();
+
+    if (!first || !last || !email || !message) {
+      setStatus("error");
+      setError(copy.errorBody);
+      return;
+    }
 
     setStatus("sending");
     setError("");
@@ -168,29 +175,48 @@ function ContactDialog({ hide }: { hide: () => void }) {
           </button>
         </header>
 
-        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 pb-3">
-          <ChatBubble>{copy.greeting}</ChatBubble>
-          <ChatBubble>{copy.hint}</ChatBubble>
+        {status === "sent" ? (
+          <>
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 pb-3">
+              <ChatBubble>{copy.greeting}</ChatBubble>
+              <ChatBubble>
+                <span className="font-medium text-white">
+                  {copy.successTitle}{" "}
+                </span>
+                {copy.successBody}
+              </ChatBubble>
+            </div>
+            <div className="border-t border-white/10 px-5 py-4">
+              <button
+                type="button"
+                onClick={hide}
+                className="w-full rounded-full bg-blue-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-deep-hover"
+              >
+                Done
+              </button>
+            </div>
+          </>
+        ) : (
+          <form
+            onSubmit={onSubmit}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-5 pb-3">
+              <ChatBubble>{copy.greeting}</ChatBubble>
+              <ChatBubble>{copy.hint}</ChatBubble>
 
-          {status === "sent" ? (
-            <ChatBubble>
-              <span className="font-medium text-white">{copy.successTitle} </span>
-              {copy.successBody}
-            </ChatBubble>
-          ) : (
-            <form id="enigma-contact" onSubmit={onSubmit} className="space-y-3">
               <div className="rounded-xl border border-white/10 px-4 py-4">
                 <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-white/55 uppercase">
                   {copy.detailsLabel}
                 </p>
                 <div className="mt-3 space-y-2.5">
                   <input
-                    type="text"
-                    name="company_website"
+                    type="checkbox"
+                    name="botcheck"
                     tabIndex={-1}
                     autoComplete="off"
                     aria-hidden
-                    className="absolute -left-[9999px] h-0 w-0 opacity-0"
+                    className="hidden"
                   />
                   <input
                     required
@@ -230,45 +256,33 @@ function ContactDialog({ hide }: { hide: () => void }) {
                   {copy.detailsHelp}
                 </p>
               </div>
-            </form>
-          )}
-        </div>
-
-        {status === "sent" ? (
-          <div className="border-t border-white/10 px-5 py-4">
-            <button
-              type="button"
-              onClick={hide}
-              className="w-full rounded-full bg-blue-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-deep-hover"
-            >
-              Done
-            </button>
-          </div>
-        ) : (
-          <div className="border-t border-white/10 px-5 pt-4 pb-4">
-            <div className="relative">
-              <textarea
-                required
-                form="enigma-contact"
-                name="message"
-                rows={3}
-                placeholder={copy.messagePlaceholder}
-                className="w-full resize-none rounded-xl border border-white/12 bg-transparent py-3 pr-14 pl-4 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-blue"
-              />
-              <button
-                type="submit"
-                form="enigma-contact"
-                disabled={status === "sending"}
-                aria-label={status === "sending" ? copy.sending : "Send message"}
-                className="absolute right-2.5 bottom-2.5 flex size-9 items-center justify-center rounded-full bg-blue-deep text-white transition-colors hover:bg-blue-deep-hover disabled:opacity-50"
-              >
-                <Send className="size-4" strokeWidth={2} aria-hidden />
-              </button>
             </div>
-            <p className="mt-2 text-center text-[11px] text-white/40">
-              {status === "error" ? error : copy.sendHint}
-            </p>
-          </div>
+
+            <div className="border-t border-white/10 px-5 pt-4 pb-4">
+              <div className="relative">
+                <textarea
+                  required
+                  name="message"
+                  rows={3}
+                  placeholder={copy.messagePlaceholder}
+                  className="w-full resize-none rounded-xl border border-white/12 bg-transparent py-3 pr-14 pl-4 text-sm text-white placeholder:text-white/35 outline-none transition-colors focus:border-blue"
+                />
+                <button
+                  type="submit"
+                  disabled={status === "sending"}
+                  aria-label={
+                    status === "sending" ? copy.sending : "Send message"
+                  }
+                  className="absolute right-2.5 bottom-2.5 flex size-9 items-center justify-center rounded-full bg-blue-deep text-white transition-colors hover:bg-blue-deep-hover disabled:opacity-50"
+                >
+                  <Send className="size-4" strokeWidth={2} aria-hidden />
+                </button>
+              </div>
+              <p className="mt-2 text-center text-[11px] text-white/40">
+                {status === "error" ? error : copy.sendHint}
+              </p>
+            </div>
+          </form>
         )}
       </div>
     </div>
@@ -305,7 +319,7 @@ export function ConsultButton({
   children = ctaLabel,
 }: {
   variant?: keyof typeof ctaStyles;
-  children?: ReactNode
+  children?: ReactNode;
 }) {
   const { show } = useContact();
 

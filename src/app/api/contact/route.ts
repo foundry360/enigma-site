@@ -10,8 +10,7 @@ type Body = {
   email?: string;
   company?: string;
   message?: string;
-  /* Honeypot mirrored from the client. */
-  company_website?: string;
+  botcheck?: string | boolean;
 };
 
 const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
@@ -56,8 +55,8 @@ export async function POST(request: Request) {
     return badRequest("Invalid JSON body.");
   }
 
-  if (String(body.company_website ?? "").trim()) {
-    /* Silent success for bots that fill the honeypot. */
+  if (body.botcheck) {
+    /* Silent success for bots that trip the honeypot. */
     return NextResponse.json({ ok: true });
   }
 
