@@ -99,32 +99,27 @@ function ContactDialog({ hide }: { hide: () => void }) {
     setError("");
 
     try {
-      const response = await fetch(
-        `https://formsubmit.co/ajax/${contact.email}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-          },
-          body: JSON.stringify({
-            _subject: copy.subject,
-            _template: "table",
-            _captcha: "false",
-            name: `${first} ${last}`,
-            first,
-            last,
-            email,
-            company: company || "(not provided)",
-            message,
-            source: "enigma.foundry360.us",
-          }),
+      const response = await fetch("/api/contact/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-      );
+        body: JSON.stringify({
+          first,
+          last,
+          email,
+          company,
+          message,
+        }),
+      });
 
-      const payload = (await response.json()) as { success?: string | boolean };
-      if (!response.ok || payload.success === "false" || payload.success === false) {
-        throw new Error("submit-failed");
+      const payload = (await response.json()) as {
+        ok?: boolean;
+        error?: string;
+      };
+      if (!response.ok || !payload.ok) {
+        throw new Error(payload.error || "submit-failed");
       }
 
       setStatus("sent");
