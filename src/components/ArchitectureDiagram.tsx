@@ -1,282 +1,372 @@
+import { icons, type IconName } from "./icons";
+
+/* Four steps, ending in evidence. Each step expands into the features that
+   matter at that step, but stays at the level of what happens to an AI action,
+   not how the system is built. No internals, component inventory, or evidence
+   schema. The detailed architecture belongs in a working session.
+
+   Wording is drawn from the thesis, decision-model, and evidence sections so
+   the diagram reuses the site's vocabulary instead of inventing a parallel one.
+
+   Palette is restrained on purpose: neutral cards with blue as the only
+   accent, marking the gateway and carrying the flow animation. The four
+   decision colours appear once, on the outcome icons. */
+
 const C = {
-  panel: "#0a0a0a",
-  panelAlt: "#111114",
+  group: "#0d0d10",
+  heroGroup: "#0b1219",
+  card: "#16161a",
+  heroCard: "#101b24",
+  tile: "#1e1e24",
   line: "#26262b",
-  lineStrong: "#34343c",
-  ink: "#ffffff",
+  ink: "#f8fafc",
   muted: "#94a3b8",
   faint: "#64748b",
-  accent: "#b69ad4",
-  brand: "#4ade80",
-  warn: "#fbbf24",
+  accent: "#2697d9",
+  accentTile: "#123044",
 };
 
-type GroupProps = {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  label: string;
-  color: string;
-  fill?: string;
-  children?: React.ReactNode;
+const OUTCOME = {
+  allow: "#4ade80",
+  controls: "#2697d9",
+  review: "#fbbf24",
+  deny: "#f87171",
 };
 
-function Group({
-  x,
-  y,
-  w,
-  h,
-  label,
-  color,
-  fill = C.panel,
-  children,
-}: GroupProps) {
-  return (
-    <g>
-      <rect
-        x={x}
-        y={y}
-        width={w}
-        height={h}
-        rx={8}
-        fill={fill}
-        stroke={color}
-        strokeWidth={1}
-      />
-      <text
-        x={x + 14}
-        y={y + 22}
-        fill={color}
-        fontSize={10.5}
-        fontWeight={700}
-        letterSpacing="1.2"
-        className="font-mono"
-      >
-        {label.toUpperCase()}
-      </text>
-      {children}
-    </g>
-  );
-}
+/* Enigma is deliberately the largest column and the only one with a product
+   title. Every column is centred on the same axis so the flow reads as one
+   line, which is why the taller hero column starts higher up. */
+const AXIS = 223;
 
-type BoxProps = {
-  x: number;
-  y: number;
+type Spec = {
   w: number;
   h: number;
+  y: number;
+  pad: number;
+  top: number;
+  item: number;
+  gap: number;
+  tile: number;
+  glyph: number;
+  titleSize: number;
+  subSize: number;
+  titleDy: number;
+  subDy: number;
+};
+
+/* Card text is sized against the rendered width, not the viewBox: the diagram
+   occupies about 1130px inside its band, so a unit here lands near 0.77px. The
+   columns are wide enough that the longest line ("Proceed under gateway rules")
+   still clears the card edge at these sizes. */
+const STD: Spec = {
+  w: 292,
+  h: 346,
+  y: AXIS - 173,
+  pad: 12,
+  top: 52,
+  item: 60,
+  gap: 12,
+  tile: 28,
+  glyph: 16,
+  titleSize: 17,
+  subSize: 13.5,
+  titleDy: -4,
+  subDy: 14,
+};
+
+const HERO: Spec = {
+  w: 336,
+  h: 414,
+  y: AXIS - 207,
+  pad: 14,
+  top: 112,
+  item: 62,
+  gap: 12,
+  tile: 30,
+  glyph: 17,
+  titleSize: 17.5,
+  subSize: 14,
+  titleDy: -4,
+  subDy: 15,
+};
+
+const XS = [16, 380, 788, 1152];
+
+/* One attempt takes 6s. The connectors pulse in turn on a 1.3s beat so the flow
+   reads left to right, then the loop rests before repeating. */
+const LINE_DELAY = (i: number) => `${0.8 + i * 1.3}s`;
+
+type Item = {
   title: string;
-  sub?: string;
+  sub: string;
+  icon: IconName;
   color?: string;
 };
 
-function Box({ x, y, w, h, title, sub, color = C.ink }: BoxProps) {
+const STEPS: {
+  label: string;
+  hero?: { title: string; sub: string };
+  items: Item[];
+}[] = [
+  {
+    label: "01 · Any AI action",
+    items: [
+      { title: "Copilot", sub: "Chat and completions", icon: "messageSquare" },
+      { title: "Agent", sub: "Autonomous tool calls", icon: "boxes" },
+      { title: "Service", sub: "Application integrations", icon: "appWindow" },
+      { title: "Record change", sub: "Actions and writes", icon: "squarePen" },
+    ],
+  },
+  {
+    label: "02 · Enigma gateway",
+    hero: {
+      title: "Enigma",
+      sub: "One decision point on the AI request path",
+    },
+    items: [
+      { title: "Bind", sub: "Actor resolved server-side", icon: "fingerprint" },
+      { title: "Decide", sub: "One policy evaluation", icon: "scale" },
+      { title: "Enforce", sub: "Control at the boundary", icon: "shieldCheck" },
+      { title: "Review", sub: "Routed to an approver", icon: "userCheck" },
+    ],
+  },
+  {
+    label: "03 · Exactly one outcome",
+    items: [
+      {
+        title: "Allow",
+        sub: "Proceed under gateway rules",
+        icon: "circleCheck",
+        color: OUTCOME.allow,
+      },
+      {
+        title: "Allow with controls",
+        sub: "Obligations applied",
+        icon: "shieldCheck",
+        color: OUTCOME.controls,
+      },
+      {
+        title: "Review",
+        sub: "Held for an approver",
+        icon: "clock",
+        color: OUTCOME.review,
+      },
+      {
+        title: "Deny",
+        sub: "Stopped at the boundary",
+        icon: "ban",
+        color: OUTCOME.deny,
+      },
+    ],
+  },
+  {
+    label: "04 · Evidence chain",
+    items: [
+      {
+        title: "Decision of record",
+        sub: "Actor, policy, reasoning",
+        icon: "fileCheck",
+      },
+      {
+        title: "Tamper-evident audit",
+        sub: "Hash-chained and signed",
+        icon: "link",
+      },
+      { title: "Reported outcome", sub: "Sealed receipt", icon: "receipt" },
+      {
+        title: "Frozen history",
+        sub: "Never rewritten later",
+        icon: "history",
+      },
+    ],
+  },
+];
+
+const LINKS = ["Intercept", "Resolve", "Seal"];
+
+function ItemCard({
+  x,
+  y,
+  item,
+  spec,
+  hero,
+}: {
+  x: number;
+  y: number;
+  item: Item;
+  spec: Spec;
+  hero?: boolean;
+}) {
+  const Icon = icons[item.icon];
+  const glyph = item.color ?? (hero ? C.accent : C.muted);
+  const width = spec.w - spec.pad * 2;
+  const textX = x + spec.tile + 20;
+
   return (
     <g>
       <rect
         x={x}
         y={y}
-        width={w}
-        height={h}
-        rx={5}
-        fill={C.panelAlt}
-        stroke={C.lineStrong}
+        width={width}
+        height={spec.item}
+        rx={7}
+        fill={hero ? C.heroCard : C.card}
+        stroke={C.line}
         strokeWidth={1}
       />
-      <text
-        x={x + 10}
-        y={y + (sub ? 20 : h / 2 + 4)}
-        fill={color}
-        fontSize={11.5}
-        fontWeight={600}
+      <rect
+        x={x + 12}
+        y={y + (spec.item - spec.tile) / 2}
+        width={spec.tile}
+        height={spec.tile}
+        rx={6}
+        fill={hero ? C.accentTile : C.tile}
+      />
+      {/* Lucide renders a 24-unit svg, so scale it in place rather than relying
+          on x/y passing through to the nested element. */}
+      <g
+        transform={`translate(${x + 12 + (spec.tile - spec.glyph) / 2} ${
+          y + (spec.item - spec.glyph) / 2
+        }) scale(${spec.glyph / 24})`}
       >
-        {title}
+        <Icon width={24} height={24} color={glyph} strokeWidth={2} />
+      </g>
+      <text
+        x={textX}
+        y={y + spec.item / 2 + spec.titleDy}
+        fill={C.ink}
+        fontSize={spec.titleSize}
+        fontWeight={700}
+      >
+        {item.title}
       </text>
-      {sub ? (
-        <text x={x + 10} y={y + 35} fill={C.muted} fontSize={9.5}>
-          {sub}
-        </text>
-      ) : null}
+      <text
+        x={textX}
+        y={y + spec.item / 2 + spec.subDy}
+        fill={C.muted}
+        fontSize={spec.subSize}
+      >
+        {item.sub}
+      </text>
     </g>
-  );
-}
-
-function Arrow({ x, y }: { x: number; y: number }) {
-  return (
-    <text
-      x={x}
-      y={y}
-      fill={C.faint}
-      fontSize={17}
-      textAnchor="middle"
-      aria-hidden
-    >
-      →
-    </text>
   );
 }
 
 export function ArchitectureDiagram() {
   return (
     <svg
-      viewBox="0 0 1240 700"
-      className="h-auto w-full min-w-[1080px] font-sans"
+      viewBox="0 0 1460 446"
+      className="h-auto w-full min-w-[1100px] font-sans"
       role="img"
-      aria-label="Enigma reference architecture: client layer calls the Enigma gateway, which binds actors, interrogates input, produces one policy decision, enforces it, and either executes the model or authorizes the customer system to commit. All decisions, approvals, outcomes, and audit events persist to a customer-controlled PostgreSQL evidence layer."
+      aria-label="How Enigma fits, at a high level, in four steps. One: any AI action, such as a copilot chat or completion, an autonomous agent tool call, a service integration, or a record change. Two: Enigma, one decision point on the AI request path, which binds the actor server-side, decides with one policy evaluation, enforces control at the boundary, and routes review to an authorized approver. Three: exactly one outcome of allow, allow with controls, review, or deny. Four: the evidence chain, containing a decision of record, a tamper-evident hash-chained audit, a sealed reported outcome, and a frozen history that is never rewritten."
     >
-      {/* client layer */}
-      <Group x={20} y={70} w={215} h={380} label="Client layer" color={C.muted}>
-        <Box x={36} y={112} w={183} h={66} title="Enterprise copilots" sub="Embedded in the SoR UI" />
-        <Box x={36} y={192} w={183} h={66} title="Agents & services" sub="Governed AI actors" />
-        <Box x={36} y={272} w={183} h={66} title="REST / LLM clients" sub="Application API key" />
-        <Box x={36} y={352} w={183} h={66} title="Operator console" sub="Decisions · Audit" />
-      </Group>
+      {XS.slice(0, 3).map((x, i) => {
+        const from = x + (STEPS[i].hero ? HERO.w : STD.w) + 6;
+        const to = XS[i + 1] - 6;
+        return (
+          <g key={`link-${x}`}>
+            <path
+              d={`M${from} ${AXIS} L${to} ${AXIS}`}
+              stroke={C.line}
+              strokeWidth={1}
+              fill="none"
+            />
+            <path
+              d={`M${to - 8} ${AXIS - 4} L${to} ${AXIS} L${to - 8} ${AXIS + 4}`}
+              stroke={C.faint}
+              strokeWidth={1}
+              fill="none"
+            />
+            <circle cx={(from + to) / 2} cy={AXIS} r={2.5} fill={C.faint} />
+            <text
+              x={(from + to) / 2}
+              y={AXIS - 13}
+              fill={C.faint}
+              fontSize={10.5}
+              fontWeight={700}
+              letterSpacing="0.8"
+              textAnchor="middle"
+              className="font-mono"
+            >
+              {LINKS[i].toUpperCase()}
+            </text>
+            <path
+              d={`M${from} ${AXIS} L${to} ${AXIS}`}
+              stroke={C.accent}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeDasharray="10 60"
+              fill="none"
+              opacity={0}
+              className="enigma-line"
+              style={{ animationDelay: LINE_DELAY(i) }}
+            />
+          </g>
+        );
+      })}
 
-      <rect x={250} y={20} width={2} height={430} fill={C.line} />
-      <text x={251} y={468} fill={C.faint} fontSize={9} textAnchor="middle" className="font-mono">
-        DMZ
-      </text>
-      <Arrow x={251} y={250} />
+      {STEPS.map((step, i) => {
+        const spec = step.hero ? HERO : STD;
+        return (
+          <g key={step.label}>
+            <rect
+              x={XS[i]}
+              y={spec.y}
+              width={spec.w}
+              height={spec.h}
+              rx={10}
+              fill={step.hero ? C.heroGroup : C.group}
+              stroke={step.hero ? C.accent : C.line}
+              strokeWidth={step.hero ? 1.25 : 1}
+            />
+            <text
+              x={XS[i] + spec.pad}
+              y={spec.y + 30}
+              fill={step.hero ? C.accent : C.faint}
+              fontSize={12}
+              fontWeight={700}
+              letterSpacing="1.1"
+              className="font-mono"
+            >
+              {step.label.toUpperCase()}
+            </text>
 
-      {/* gateway */}
-      <rect x={265} y={20} width={610} height={430} rx={8} fill={C.panel} stroke={C.accent} />
-      <rect x={265} y={22} width={3} height={426} fill={C.accent} />
-      <text x={283} y={44} fill={C.accent} fontSize={10.5} fontWeight={700} letterSpacing="1.2" className="font-mono">
-        ENIGMA GATEWAY · POLICY DECISION POINT + ENFORCEMENT POINT
-      </text>
+            {step.hero && (
+              <>
+                <text
+                  x={XS[i] + spec.pad}
+                  y={spec.y + 72}
+                  fill={C.ink}
+                  fontSize={24}
+                  fontWeight={700}
+                  letterSpacing="-0.3"
+                >
+                  {step.hero.title}
+                </text>
+                <text
+                  x={XS[i] + spec.pad}
+                  y={spec.y + 93}
+                  fill={C.muted}
+                  fontSize={13}
+                >
+                  {step.hero.sub}
+                </text>
+              </>
+            )}
 
-      <Group x={281} y={60} w={281} h={118} label="1 · Bind" color={C.ink} fill={C.panelAlt}>
-        <Box x={293} y={94} w={124} h={32} title="API key → app" />
-        <Box x={425} y={94} w={124} h={32} title="User + purpose" />
-        <Box x={293} y={132} w={124} h={32} title="Agent (server)" />
-        <Box x={425} y={132} w={124} h={32} title="Tool + operation" />
-      </Group>
-
-      <Group x={578} y={60} w={281} h={118} label="2 · Interrogate input" color={C.ink} fill={C.panelAlt}>
-        <Box x={590} y={94} w={124} h={32} title="Detectors" />
-        <Box x={722} y={94} w={124} h={32} title="Semantic class." />
-        <Box x={590} y={132} w={124} h={32} title="Entity types" />
-        <Box x={722} y={132} w={124} h={32} title="Sensitivity label" />
-      </Group>
-
-      <Group
-        x={281}
-        y={194}
-        w={578}
-        h={128}
-        label="3 · Decide · enterprise policy architecture (single PDP)"
-        color={C.accent}
-        fill={C.panelAlt}
-      >
-        <Box x={293} y={226} w={131} h={44} title="Policy packs" sub="Regulatory + baseline" />
-        <Box x={434} y={226} w={131} h={44} title="Agent → tool grant" sub="Deny if not granted" />
-        <Box x={575} y={226} w={131} h={44} title="Obligations" sub="Pack-contributed" />
-        <Box x={716} y={226} w={131} h={44} title="Model eligibility" sub="Restrict provider" />
-        <rect x={293} y={278} width={554} height={32} rx={6} fill={C.panel} stroke={C.accent} />
-        <text
-          x={570}
-          y={298}
-          fill={C.ink}
-          fontSize={11}
-          fontWeight={700}
-          textAnchor="middle"
-          letterSpacing="0.6"
-          className="font-mono"
-        >
-          ONE DECISION → ALLOW · ALLOW WITH CONTROLS · REVIEW · DENY
-        </text>
-      </Group>
-
-      <Group x={281} y={338} w={281} h={96} label="4 · Enforce" color={C.brand} fill={C.panelAlt}>
-        <Box x={293} y={366} w={124} h={28} title="Tokenize / redact" />
-        <Box x={425} y={366} w={124} h={28} title="Hold for review" />
-        <Box x={293} y={398} w={124} h={28} title="Block" />
-        <Box x={425} y={398} w={124} h={28} title="Authorize commit" />
-      </Group>
-
-      <Group x={578} y={338} w={281} h={96} label="5 · Response path" color={C.brand} fill={C.panelAlt}>
-        <Box x={590} y={366} w={124} h={28} title="Inspector" />
-        <Box x={722} y={366} w={124} h={28} title="Grounding check" />
-        <Box x={590} y={398} w={124} h={28} title="De-tokenize" />
-        <Box x={722} y={398} w={124} h={28} title="Release or block" />
-      </Group>
-
-      <Arrow x={890} y={250} />
-
-      {/* right column */}
-      <Group x={905} y={20} w={315} h={130} label="Model execution" color={C.muted}>
-        <Box x={921} y={52} w={137} h={30} title="Local model" />
-        <Box x={1066} y={52} w={137} h={30} title="External provider" />
-        <Box
-          x={921}
-          y={90}
-          w={282}
-          h={44}
-          title="Selected by policy eligibility"
-          sub="Air-gap supported · not cost or load routing"
-        />
-      </Group>
-
-      <Group x={905} y={166} w={315} h={130} label="Human review" color={C.warn}>
-        <Box
-          x={921}
-          y={198}
-          w={282}
-          h={44}
-          title="Authorized approver resolves"
-          sub="Never the requesting end user"
-        />
-        <Box
-          x={921}
-          y={248}
-          w={282}
-          h={40}
-          title="Authorize → resume"
-          sub="Resume revalidates the binding"
-        />
-      </Group>
-
-      <Group x={905} y={312} w={315} h={138} label="Client commit · customer executes" color={C.warn}>
-        <Box
-          x={921}
-          y={344}
-          w={282}
-          h={44}
-          title="System of record performs the write"
-          sub="Enigma does not execute external DML"
-        />
-        <Box
-          x={921}
-          y={396}
-          w={282}
-          h={44}
-          title="Outcome reported and sealed"
-          sub="Conflict detection on report"
-        />
-      </Group>
-
-      {/* evidence */}
-      <Group
-        x={20}
-        y={480}
-        w={1200}
-        h={170}
-        label="Evidence & data layer · customer-controlled PostgreSQL"
-        color={C.brand}
-      >
-        <Box x={36} y={520} w={281} h={56} title="Decision records" sub="Authoritative, immutable, frozen" />
-        <Box x={332} y={520} w={281} h={56} title="Agents · tools · grants" sub="Server-authoritative registry" />
-        <Box x={628} y={520} w={281} h={56} title="Policies · packs · versions" sub="Obligations and scopes" />
-        <Box x={924} y={520} w={281} h={56} title="Approvals" sub="Human resolutions, additive" />
-        <Box x={36} y={586} w={281} h={56} title="Action outcomes" sub="Client-reported execution" />
-        <Box x={332} y={586} w={281} h={56} title="Token vault" sub="Tokenization store" />
-        <Box x={628} y={586} w={281} h={56} title="Audit events" sub="Append-only · hash-chained · signed" />
-        <Box x={924} y={586} w={281} h={56} title="Checkpoints · anchors" sub="Integrity + optional anchoring" />
-      </Group>
-
-      <text x={20} y={678} fill={C.muted} fontSize={10.5}>
-        Enforcement boundary: Enigma authorizes, the customer system executes. Authorization to commit is not proof of commit.
-      </text>
+            {step.items.map((item, j) => (
+              <ItemCard
+                key={item.title}
+                x={XS[i] + spec.pad}
+                y={spec.y + spec.top + j * (spec.item + spec.gap)}
+                item={item}
+                spec={spec}
+                hero={Boolean(step.hero)}
+              />
+            ))}
+          </g>
+        );
+      })}
     </svg>
   );
 }

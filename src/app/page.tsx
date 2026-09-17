@@ -1,4 +1,5 @@
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
+import { BackToTop } from "@/components/BackToTop";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
 import {
@@ -12,10 +13,10 @@ import {
 import {
   category,
   contact,
+  ctaLabel,
   decisions,
   enforcement,
   evidence,
-  healthcare,
   how,
   problem,
   product,
@@ -103,12 +104,22 @@ export default function Home() {
           />
           <div className="mt-14 grid gap-5 lg:grid-cols-4">
             {how.flow.map((step) => (
-              <Panel key={step.title} tone="light" className="p-7">
-                <CardIcon name={step.icon} tone="light" accent={step.accent} />
-                <p className="mt-4 text-sm font-bold text-ink">{step.title}</p>
+              <Panel key={step.title} tone="light" className="p-7" hover>
+                <CardIcon
+                  name={step.icon}
+                  tone="light"
+                  accent={step.accent}
+                  className="transition-colors group-hover:text-white"
+                />
+                <p className="mt-4 text-sm font-bold text-ink transition-colors group-hover:text-white">
+                  {step.title}
+                </p>
                 <div className="mt-2 space-y-1.5">
                   {step.lines.map((line) => (
-                    <p key={line} className="text-sm text-slate">
+                    <p
+                      key={line}
+                      className="text-sm text-slate transition-colors group-hover:text-white"
+                    >
                       {line}
                     </p>
                   ))}
@@ -119,12 +130,17 @@ export default function Home() {
 
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {how.notes.map((note) => (
-              <Panel key={note.title} tone="light" className="p-7">
-                <CardIcon name={note.icon} tone="light" accent={note.accent} />
-                <h3 className="mt-4 text-base font-bold text-ink">
+              <Panel key={note.title} tone="light" className="p-7" hover>
+                <CardIcon
+                  name={note.icon}
+                  tone="light"
+                  accent={note.accent}
+                  className="transition-colors group-hover:text-white"
+                />
+                <h3 className="mt-4 text-base font-bold text-ink transition-colors group-hover:text-white">
                   {note.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-slate">
+                <p className="mt-2 text-sm leading-relaxed text-slate transition-colors group-hover:text-white">
                   {note.body}
                 </p>
               </Panel>
@@ -137,17 +153,14 @@ export default function Home() {
           <SectionHead
             tone="dark"
             kicker="Reference architecture"
-            title="One path, drawn end to end."
-            subtitle="Bind and interrogate feed a single policy decision point. That decision drives enforcement, the response path, and everything written to the evidence layer."
+            title="One Path, Drawn End To End."
+            subtitle="Every governed AI action converges on one authoritative decision. The control applied, the approval, and the reported outcome are all recorded against that decision."
             align="left"
           />
           <figure className="mt-12">
             <div className="overflow-x-auto rounded-lg border border-white/12 bg-[#0a0a0a] p-6">
               <ArchitectureDiagram />
             </div>
-            <figcaption className="mt-4 text-sm text-slate">
-              Scroll horizontally to see the full diagram on narrow screens.
-            </figcaption>
           </figure>
         </Band>
 
@@ -252,52 +265,10 @@ export default function Home() {
           </div>
         </Band>
 
-        {/* ----------------------------------------------- healthcare · dark */}
-        <Band tone="dark" id="healthcare">
+        {/* -------------------------------------------------- category · dark */}
+        <Band tone="dark">
           <SectionHead
             tone="dark"
-            kicker={healthcare.kicker}
-            title={healthcare.title}
-            subtitle={healthcare.subtitle}
-            align="left"
-          />
-          <div className="mt-12 space-y-4">
-            {healthcare.rows.map((row) => (
-              <Panel key={row.ask} tone="dark" className="p-7">
-                <div className="grid gap-3 lg:grid-cols-12 lg:items-center lg:gap-6">
-                  <p className="font-medium text-white lg:col-span-4">
-                    &ldquo;{row.ask}&rdquo;
-                  </p>
-                  <div className="flex items-center gap-3 lg:col-span-3">
-                    <CardIcon
-                      name={row.icon}
-                      tone="dark"
-                      accent={row.accent}
-                      size="size-6"
-                      className="shrink-0"
-                    />
-                    <span
-                      className={`font-mono text-xs font-bold tracking-[0.12em] ${accentText.dark[row.accent]}`}
-                    >
-                      {row.decision}
-                    </span>
-                  </div>
-                  <p className="text-sm leading-relaxed text-slate-dim lg:col-span-5">
-                    {row.detail}
-                  </p>
-                </div>
-              </Panel>
-            ))}
-          </div>
-          <p className="mt-6 max-w-4xl text-sm leading-relaxed text-slate">
-            {healthcare.note}
-          </p>
-        </Band>
-
-        {/* ------------------------------------------------- category · light */}
-        <Band tone="light">
-          <SectionHead
-            tone="light"
             kicker={category.kicker}
             title={category.title}
             subtitle={category.subtitle}
@@ -306,17 +277,19 @@ export default function Home() {
             {category.adjacent.map((item) => (
               <Panel
                 key={item.name}
-                tone="light"
+                tone="dark"
                 className="flex flex-col items-center px-7 py-7 text-center"
               >
-                <CardIcon name={item.icon} tone="light" />
-                <h3 className="mt-4 text-sm font-bold text-ink">{item.name}</h3>
-                <p className="mt-1.5 text-sm text-slate">{item.body}</p>
+                <CardIcon name={item.icon} tone="dark" />
+                <h3 className="mt-4 text-sm font-bold text-white">
+                  {item.name}
+                </h3>
+                <p className="mt-1.5 text-sm text-slate-dim">{item.body}</p>
               </Panel>
             ))}
           </div>
 
-          <div className="mt-6 rounded-lg bg-purple p-10 text-center">
+          <div className="mt-6 rounded-lg bg-blue-deep p-10 text-center">
             <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
               {category.highlight.label}
             </p>
@@ -329,22 +302,22 @@ export default function Home() {
           </div>
         </Band>
 
-        {/* --------------------------------------------------- product · dark */}
-        <Band tone="dark">
+        {/* -------------------------------------------------- product · light */}
+        <Band tone="light">
           <SectionHead
-            tone="dark"
+            tone="light"
             kicker={product.kicker}
             title={product.title}
             subtitle={product.subtitle}
           />
           <div className="mt-14 grid gap-6 md:grid-cols-3">
             {product.columns.map((col) => (
-              <Panel key={col.title} tone="dark" className="p-8">
-                <CardIcon name={col.icon} tone="dark" accent={col.accent} />
-                <h3 className="mt-5 text-base font-bold text-white">
+              <Panel key={col.title} tone="light" className="p-8">
+                <CardIcon name={col.icon} tone="light" accent={col.accent} />
+                <h3 className="mt-5 text-base font-bold text-ink">
                   {col.title}
                 </h3>
-                <p className="mt-3 text-sm leading-relaxed text-slate-dim">
+                <p className="mt-3 text-sm leading-relaxed text-slate">
                   {col.body}
                 </p>
               </Panel>
@@ -354,7 +327,7 @@ export default function Home() {
 
         {/* ------------------------------------------------- contact · white */}
         <Band tone="white" id="contact">
-          <div className="rounded-lg bg-purple px-8 py-16 text-center">
+          <div className="rounded-lg bg-blue-deep px-8 py-16 text-center">
             <p className="font-mono text-[11px] font-medium tracking-[0.18em] text-white/70 uppercase">
               {contact.kicker}
             </p>
@@ -367,16 +340,16 @@ export default function Home() {
             <div className="mt-9">
               <Button
                 href={`mailto:${contact.email}?subject=Enigma%20working%20session`}
-                variant="onPurple"
+                variant="onAccent"
               >
-                {contact.email}
+                {ctaLabel}
               </Button>
             </div>
           </div>
         </Band>
       </main>
 
-      <footer className="bg-purple px-6 py-7 sm:px-10">
+      <footer className="bg-black px-6 py-7 sm:px-10">
         <div className="mx-auto flex w-full max-w-[1180px] flex-wrap items-center justify-center gap-x-3 gap-y-1 text-center">
           <p className="text-sm text-white/80">
             © {new Date().getFullYear()} Foundry360. All rights reserved.
@@ -386,6 +359,8 @@ export default function Home() {
           </p>
         </div>
       </footer>
+
+      <BackToTop />
     </>
   );
 }

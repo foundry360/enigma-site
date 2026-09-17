@@ -1,18 +1,19 @@
+import Image from "next/image";
 import Link from "next/link";
+import enigmaLogo from "@/assets/enigma-logo.png";
 import { nav } from "@/content/site";
 
 export function Nav() {
   return (
     <header className="sticky top-0 z-50 bg-black">
       <div className="mx-auto flex h-[72px] w-full max-w-[1180px] items-center justify-between gap-6 px-6 sm:px-10">
-        <Link href="/" className="flex items-baseline gap-1.5">
-          <span className="text-xl font-bold tracking-tight text-white">
-            Enigma
-          </span>
-          <span className="text-xl font-bold text-purple-soft">/</span>
-          <span className="hidden text-[11px] font-medium tracking-[0.14em] text-slate uppercase sm:inline">
-            Foundry360
-          </span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src={enigmaLogo}
+            alt="Enigma"
+            className="h-8 w-auto"
+            loading="eager"
+          />
         </Link>
 
         <nav className="hidden items-center gap-8 lg:flex">
@@ -29,7 +30,7 @@ export function Nav() {
 
         <a
           href={nav.cta.href}
-          className="rounded-md bg-purple px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-purple-hover"
+          className="rounded-full bg-blue-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-deep-hover"
         >
           {nav.cta.label}
         </a>

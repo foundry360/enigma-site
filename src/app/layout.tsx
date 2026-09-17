@@ -21,8 +21,8 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL("https://enigma.foundry360.us"),
   title: {
-    default: "Enigma — AI Action Governance Gateway",
-    template: "%s — Enigma",
+    default: "Enigma: AI Action Governance Gateway",
+    template: "%s | Enigma",
   },
   description,
   keywords: [
@@ -33,14 +33,14 @@ export const metadata: Metadata = {
     "AI audit evidence",
   ],
   openGraph: {
-    title: "Enigma — AI Action Governance Gateway",
+    title: "Enigma: AI Action Governance Gateway",
     description,
     type: "website",
     siteName: "Enigma",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Enigma — AI Action Governance Gateway",
+    title: "Enigma: AI Action Governance Gateway",
     description,
   },
   robots: { index: true, follow: true },

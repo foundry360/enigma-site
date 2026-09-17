@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Palette and rhythm follow the Node2AI house style: alternating black and
-   light bands, a single deep purple accent, and square corners throughout. */
+   light bands, a single blue accent, pill buttons, and rounded cards. */
 @theme {
   --color-black: #030303;
   --color-light: #f0f2f4;
@@ -10,9 +10,13 @@
   --color-slate: #64748b;
   --color-slate-dim: #94a3b8;
 
-  --color-purple: #45196c;
-  --color-purple-hover: #57218a;
-  --color-purple-soft: #b69ad4;
+  /* Brand blue for graphics: icons, borders, and the card hover fill. */
+  --color-blue: #2697d9;
+  --color-blue-soft: #9ad0ee;
+  /* White text only clears 3.2:1 on the brand blue, so surfaces that carry it
+     use the deeper shade instead. Small blue text on the light bands does too. */
+  --color-blue-deep: #1b72a6;
+  --color-blue-deep-hover: #155e8a;
 
   --font-sans: var(--font-roboto);
   --font-mono: var(--font-roboto-mono);
@@ -29,11 +33,96 @@ body {
 }
 
 ::selection {
-  background: rgba(69, 25, 108, 0.35);
+  background: rgba(38, 151, 217, 0.35);
+}
+
+/* Hero backdrop: a faint grid washed by a blue glow from the top-left corner,
+   both fading out well before they reach the headline so contrast is untouched.
+   Purely decorative, so the call site marks these layers aria-hidden. */
+.enigma-hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.075) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.075) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(
+    115% 95% at 0% 0%,
+    #000 0%,
+    transparent 58%
+  );
+  mask-image: radial-gradient(115% 95% at 0% 0%, #000 0%, transparent 58%);
+}
+
+.enigma-hero-glow {
+  background: radial-gradient(
+    55% 70% at 0% 0%,
+    rgba(38, 151, 217, 0.2) 0%,
+    rgba(38, 151, 217, 0.06) 38%,
+    transparent 68%
+  );
+}
+
+/* Hover state for the flow cards: the card fills solid blue and a ring pulses
+   out from it. The ring is a box-shadow so it pulses without
+   affecting layout or nudging neighbours in the grid. Colour and border changes
+   live in the Tailwind classes on the Panel; only the pulse is animated, so the
+   hover state still reads under reduced motion below. */
+@keyframes enigma-card-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(38, 151, 217, 0.35);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(38, 151, 217, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(38, 151, 217, 0);
+  }
+}
+
+.enigma-card {
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease;
+}
+
+.enigma-card:hover {
+  animation: enigma-card-pulse 1.5s ease-out infinite;
+}
+
+/* Decision-flow animation for the reference diagram. One 6s loop walks a single
+   attempt along the chain: each connector pulses in turn, staggered purely by
+   delay, then the loop rests before repeating. The pulse is an overlay on top of
+   a statically visible connector, so the diagram still reads correctly when
+   animation is disabled below. */
+@keyframes enigma-line {
+  0% {
+    stroke-dashoffset: 50;
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  11% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  13%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+.enigma-line {
+  animation: enigma-line 6s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .enigma-line,
+  .enigma-card:hover {
+    animation: none;
   }
 }

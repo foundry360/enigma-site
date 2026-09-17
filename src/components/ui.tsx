@@ -28,25 +28,30 @@ const cardShell: Record<Tone, string> = {
   white: "border-black/10 bg-offwhite",
 };
 
+/* Opt-in hover state: the card fills solid blue and pulses. Children opt into
+   the inverted text colour with group-hover, since the fill is the same on
+   every tone. */
+const cardHover = "enigma-card group hover:border-blue hover:bg-blue";
+
 /* Semantic decision colors are tuned per band so contrast holds on both.
    Tailwind requires literal class strings, hence the explicit maps. */
 export const accentText: Record<Tone, Record<Accent, string>> = {
   dark: {
-    accent: "text-purple-soft",
+    accent: "text-blue-soft",
     brand: "text-[#4ade80]",
     warn: "text-[#fbbf24]",
     danger: "text-[#f87171]",
     muted: "text-slate-dim",
   },
   light: {
-    accent: "text-purple",
+    accent: "text-blue-deep",
     brand: "text-[#15803d]",
     warn: "text-[#b45309]",
     danger: "text-[#b91c1c]",
     muted: "text-slate",
   },
   white: {
-    accent: "text-purple",
+    accent: "text-blue-deep",
     brand: "text-[#15803d]",
     warn: "text-[#b45309]",
     danger: "text-[#b91c1c]",
@@ -116,18 +121,32 @@ export function SectionHead({
 export function Panel({
   tone,
   className = "",
+  hover = false,
   children,
 }: {
   tone: Tone;
   className?: string;
+  hover?: boolean;
   children: ReactNode;
 }) {
   return (
-    <div className={`rounded-lg border ${cardShell[tone]} ${className}`}>
+    <div
+      className={`rounded-lg border ${cardShell[tone]} ${
+        hover ? cardHover : ""
+      } ${className}`}
+    >
       {children}
     </div>
   );
 }
+
+/* Icons are graphics, not text, so they keep the brand blue at the 3:1 bar the
+   deeper text shade would overshoot. Only the accent entry differs. */
+const accentIcon: Record<Tone, Record<Accent, string>> = {
+  dark: accentText.dark,
+  light: { ...accentText.light, accent: "text-blue" },
+  white: { ...accentText.white, accent: "text-blue" },
+};
 
 export function CardIcon({
   name,
@@ -147,7 +166,7 @@ export function CardIcon({
   const Glyph = icons[name];
   return (
     <Glyph
-      className={`${size} ${accentText[tone][accent]} ${className}`}
+      className={`${size} ${accentIcon[tone][accent]} ${className}`}
       strokeWidth={1.5}
       aria-hidden
     />
@@ -161,18 +180,18 @@ export function Button({
 }: {
   href: string;
   children: ReactNode;
-  variant?: "solid" | "outline" | "onPurple";
+  variant?: "solid" | "outline" | "onAccent";
 }) {
   const styles = {
-    solid: "bg-purple text-white hover:bg-purple-hover",
+    solid: "bg-blue-deep text-white hover:bg-blue-deep-hover",
     outline: "border border-white/30 text-white hover:border-white",
-    onPurple: "bg-white text-purple hover:bg-offwhite",
+    onAccent: "bg-white text-blue-deep hover:bg-offwhite",
   }[variant];
 
   return (
     <a
       href={href}
-      className={`inline-block rounded-md px-6 py-3 text-sm font-medium transition-colors ${styles}`}
+      className={`inline-block rounded-full px-6 py-3 text-sm font-medium transition-colors ${styles}`}
     >
       {children}
     </a>
