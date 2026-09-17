@@ -14,12 +14,34 @@ type Body = {
   company_website?: string;
 };
 
+const EMAIL_RE = /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/;
+const NAMED_EMAIL_RE =
+  /^(?:.+?\s*)?<([^\s@<>]+@[^\s@<>]+\.[^\s@<>]+)>$|^([^\s@<>]+@[^\s@<>]+\.[^\s@<>]+)$/;
+
 function badRequest(message: string) {
   return NextResponse.json({ ok: false, error: message }, { status: 400 });
 }
 
+/* Vercel secret values sometimes arrive with wrapping quotes or stray
+   whitespace. Normalize before handing them to Resend. */
+function cleanEnv(value: string | undefined) {
+  return String(value ?? "")
+    .trim()
+    .replace(/^['"]|['"]$/g, "")
+    .trim();
+}
+
+function parseAddress(raw: string | undefined, fallback: string) {
+  const value = cleanEnv(raw) || fallback;
+  const match = value.match(NAMED_EMAIL_RE);
+  if (!match) return null;
+  const email = match[1] || match[2];
+  if (!EMAIL_RE.test(email)) return null;
+  return value.includes("<") ? value : email;
+}
+
 export async function POST(request: Request) {
-  const apiKey = process.env.RESEND_API_KEY;
+  const apiKey = cleanEnv(process.env.RESEND_API_KEY);
   if (!apiKey) {
     return NextResponse.json(
       { ok: false, error: "Email is not configured." },
@@ -48,16 +70,25 @@ export async function POST(request: Request) {
   if (!first || !last || !email || !message) {
     return badRequest("Missing required fields.");
   }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+  if (!EMAIL_RE.test(email)) {
     return badRequest("Invalid email.");
   }
   if (message.length > 5000) {
     return badRequest("Message is too long.");
   }
 
-  const to = process.env.CONTACT_TO_EMAIL || contact.email;
-  const from =
-    process.env.CONTACT_FROM_EMAIL || "Enigma <onboarding@resend.dev>";
+  const to = parseAddress(process.env.CONTACT_TO_EMAIL, contact.email);
+  const from = parseAddress(
+    process.env.CONTACT_FROM_EMAIL,
+    "Enigma <onboarding@resend.dev>",
+  );
+
+  if (!to || !from) {
+    return NextResponse.json(
+      { ok: false, error: "Email addresses are misconfigured." },
+      { status: 503 },
+    );
+  }
 
   const resend = new Resend(apiKey);
   const name = `${first} ${last}`;
@@ -70,7 +101,7 @@ export async function POST(request: Request) {
       `Name: ${name}`,
       `Email: ${email}`,
       `Company: ${company || "(not provided)"}`,
-      `Source: enigma.foundry360.us`,
+      `Source: www.getenigmaai.com`,
       "",
       message,
     ].join("\n"),
