@@ -1,10 +1,11 @@
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { BackToTop } from "@/components/BackToTop";
+import { DecisionModel } from "@/components/DecisionModel";
 import { Hero } from "@/components/Hero";
 import { Nav } from "@/components/Nav";
+import { ConsultButton } from "@/components/Contact";
 import {
   Band,
-  Button,
   CardIcon,
   Panel,
   SectionHead,
@@ -172,35 +173,11 @@ export default function Home() {
             title={decisions.title}
             subtitle={decisions.subtitle}
           />
-          <div className="mt-14 space-y-4">
-            {decisions.rows.map((row) => (
-              <Panel key={row.name} tone="light" className="p-7">
-                <div className="grid gap-3 lg:grid-cols-12 lg:items-center lg:gap-6">
-                  <div className="flex items-center gap-3 lg:col-span-3">
-                    <CardIcon
-                      name={row.icon}
-                      tone="light"
-                      accent={row.accent}
-                      size="size-6"
-                      className="shrink-0"
-                    />
-                    <span
-                      className={`font-mono text-xs font-bold tracking-[0.12em] ${accentText.light[row.accent]}`}
-                    >
-                      {row.name}
-                    </span>
-                  </div>
-                  <p className="font-medium text-ink lg:col-span-4">
-                    {row.meaning}
-                  </p>
-                  <p className="text-sm leading-relaxed text-slate lg:col-span-5">
-                    {row.example}
-                  </p>
-                </div>
-              </Panel>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-slate">{decisions.note}</p>
+          <figure className="mt-12">
+            <div className="overflow-x-auto rounded-lg border border-black/10 bg-white p-6 sm:p-8">
+              <DecisionModel />
+            </div>
+          </figure>
         </Band>
 
         {/* ---------------------------------------------- enforcement · dark */}
@@ -229,14 +206,6 @@ export default function Home() {
               </Panel>
             ))}
           </div>
-          <Panel tone="dark" className="mt-6 p-8">
-            <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-[#f87171] uppercase">
-              {enforcement.disclaimer.title}
-            </p>
-            <p className="mt-3 max-w-4xl text-sm leading-relaxed text-slate-dim">
-              {enforcement.disclaimer.body}
-            </p>
-          </Panel>
         </Band>
 
         {/* ------------------------------------------------- evidence · light */}
@@ -338,12 +307,7 @@ export default function Home() {
               {contact.body}
             </p>
             <div className="mt-9">
-              <Button
-                href={`mailto:${contact.email}?subject=Enigma%20working%20session`}
-                variant="onAccent"
-              >
-                {ctaLabel}
-              </Button>
+              <ConsultButton variant="onAccent">{ctaLabel}</ConsultButton>
             </div>
           </div>
         </Band>

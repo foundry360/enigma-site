@@ -1,5 +1,5 @@
 import { hero } from "@/content/site";
-import { Button } from "./ui";
+import { ConsultButton } from "./Contact";
 
 export function Hero() {
   const [beforeAccent, afterAccent] = hero.headline.split(hero.headlineAccent);
@@ -34,9 +34,7 @@ export function Hero() {
         </p>
 
         <div className="mt-11 flex flex-wrap items-center justify-center gap-3">
-          <Button href={hero.cta.href} variant="outline">
-            {hero.cta.label}
-          </Button>
+          <ConsultButton variant="outline">{hero.cta.label}</ConsultButton>
         </div>
       </div>
     </section>

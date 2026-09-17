@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import enigmaLogo from "@/assets/enigma-logo.png";
 import { nav } from "@/content/site";
+import { ConsultButton } from "./Contact";
 
 export function Nav() {
   return (
@@ -28,12 +29,7 @@ export function Nav() {
           ))}
         </nav>
 
-        <a
-          href={nav.cta.href}
-          className="rounded-full bg-blue-deep px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-blue-deep-hover"
-        >
-          {nav.cta.label}
-        </a>
+        <ConsultButton variant="nav">{nav.cta.label}</ConsultButton>
       </div>
     </header>
   );

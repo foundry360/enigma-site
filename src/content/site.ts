@@ -174,41 +174,7 @@ export const decisions = {
   kicker: "Decision model",
   title: "Four Decisions. One Record. No Silent Allow.",
   subtitle:
-    "Every governed request produces exactly one immutable decision in the system of record.",
-  rows: [
-    {
-      name: "ALLOW",
-      icon: "circleCheck" as IconName,
-      accent: "brand" as Accent,
-      meaning: "Proceed under gateway rules.",
-      example: "A low-risk read where the authorization facts are satisfied.",
-    },
-    {
-      name: "ALLOW WITH CONTROLS",
-      icon: "shieldCheck" as IconName,
-      accent: "accent" as Accent,
-      meaning: "Proceed, with obligations applied.",
-      example:
-        "A question about protected health data is answered with tokenization and model eligibility limits.",
-    },
-    {
-      name: "REVIEW",
-      icon: "clock" as IconName,
-      accent: "warn" as Accent,
-      meaning: "Held for an authorized approver.",
-      example:
-        "A record change waits for human authorization, then the same request resumes.",
-    },
-    {
-      name: "DENY",
-      icon: "ban" as IconName,
-      accent: "danger" as Accent,
-      meaning: "Must not proceed at the boundary.",
-      example:
-        "The agent holds no grant for the tool, so no authorization to commit is issued.",
-    },
-  ],
-  note: "The machine decision is never overwritten. Human review is additive, and a denial cannot be approved away.",
+    "One policy evaluation. Exactly one outcome.",
 };
 
 export const enforcement = {
@@ -232,10 +198,6 @@ export const enforcement = {
       body: "After an allow or an approval, Enigma issues authorization to commit, your system of record executes the write, and the client reports the outcome back for the evidence chain. Bypassing the gateway altogether remains a customer-side risk.",
     },
   ],
-  disclaimer: {
-    title: "What We Do Not Claim",
-    body: "Enigma does not control every AI system in an enterprise, does not execute all enterprise changes, and does not by itself make an organization compliant. It replaces neither identity management, governance programs, data loss prevention, nor security monitoring. It decides and evidences AI actions on its path.",
-  },
 };
 
 export const evidence = {
@@ -320,7 +282,7 @@ export const product = {
   kicker: "Product",
   title: "Available Now As An Enterprise Appliance.",
   subtitle:
-    "Deliberately scoped to the action-time governance chain and hardened, not a platform land grab.",
+    "Deliberately scoped to the action-time governance chain and hardened.",
   columns: [
     {
       title: "What Ships",
@@ -347,6 +309,27 @@ export const contact = {
   kicker: "Next step",
   title: "Start With One Real AI Action.",
   body: "A working session on a single consequential action in your environment, followed by a live walkthrough of the decision, the hold, the approval, and the evidence it produces.",
-  email: "hello@foundry360.us",
+  email: "jgelsomino@foundry360.us",
   site: "foundry360.us",
+  assistant: {
+    title: "Enigma assistant",
+    status: "Online. Replies from our team",
+    greeting:
+      "Hi. I'm the Enigma assistant. Describe what you're trying to solve, your timeline, and any constraints. A human on our team reads every submission.",
+    hint: "Add your details in the card below, type your message in the box at the bottom, then tap send.",
+    detailsLabel: "Your details",
+    emailPlaceholder: "Work email",
+    firstPlaceholder: "First",
+    lastPlaceholder: "Last",
+    companyPlaceholder: "Company (optional)",
+    detailsHelp:
+      "Email and name are required. Company is optional. These appear on the thread for our team only.",
+    messagePlaceholder: "Type your message...",
+    sendHint: "Press send when your message is ready.",
+    sending: "Sending...",
+    successTitle: "Message sent.",
+    successBody: "A human on the Foundry360 team will read it and follow up.",
+    errorBody: "The message could not be sent. Try again in a moment.",
+    subject: "Enigma consult request",
+  },
 };
