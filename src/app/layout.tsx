@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { Roboto, Roboto_Mono } from "next/font/google";
 import { ContactProvider } from "@/components/Contact";
 import "./globals.css";
@@ -47,6 +48,8 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
@@ -56,6 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full font-sans">
         <ContactProvider>{children}</ContactProvider>
       </body>
+      {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
     </html>
   );
 }
